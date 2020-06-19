@@ -12,9 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -49,24 +49,19 @@ public class Daftar extends AppCompatActivity {
 
     private Spinner spNamen;
     private Button daftar, chooseImg;
+    private TextView Loginya;
+
     private EditText nama, email, alamat, password, telpon;
     private ProgressBar loading;
 
-    private static String URL = "https://6587196e9038.ngrok.io/api/peternak/auth/daftar";
-
     //Image
-    Uri UriPhoto, fileUri;
-    ImageView imageView;
-    Bitmap BitPhoto, bitmap, decoded;
-    String StringImage;
-    int success;
+    Uri fileUri;
+    Bitmap bitmap, decoded;
     int PICK_IMAGE_REQUEST = 1;
     int bitmap_size = 60; // range 1 - 100
-
     public final int REQUEST_CAMERA = 0;
     public final int SELECT_FILE = 1;
     Intent intent;
-    int max_resolution_image = 2048;
 
 
     @Override
@@ -74,7 +69,7 @@ public class Daftar extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_daftar);
 
-        imageView = findViewById(R.id.imageView);
+
         spNamen = findViewById(R.id.spinner);
         daftar = findViewById(R.id.btn_daftar);
         nama = findViewById(R.id.fm_nama);
@@ -84,6 +79,17 @@ public class Daftar extends AppCompatActivity {
         telpon = findViewById(R.id.fm_telpon);
         loading = findViewById(R.id.fm_loading);
         chooseImg = findViewById(R.id.btn_choose_image);
+        Loginya = findViewById(R.id.login);
+
+
+        Loginya.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent login = new Intent(Daftar.this, Login.class);
+                startActivity(login);
+                finish();
+            }
+        });
 
         chooseImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,10 +144,10 @@ public class Daftar extends AppCompatActivity {
     private void daftarPeternak(final String namanya, final String emailnya, final String alamatnya, final String passwordnya, final String telponya, final int kelompok_id) {
         loading.setVisibility(View.VISIBLE);
         daftar.setVisibility(View.GONE);
-
+        String daftarnya = "api/peternak/auth/daftar";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, R.string.SERVER + daftarnya, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {

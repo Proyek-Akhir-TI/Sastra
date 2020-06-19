@@ -115,11 +115,13 @@
         android:layout_width="109dp"
         android:layout_height="53dp"
         android:background="#F0C861"
-        android:text="REGISTER"
+        android:text="Daftar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/spinner"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/spinner"
-        app:layout_constraintTop_toBottomOf="@+id/btn_choose_image" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_choose_image"
+        app:layout_constraintVertical_bias="0.459" />
 
     <TextView
         android:id="@+id/textView3"
@@ -207,11 +209,11 @@
 
     <Button
         android:id="@+id/btn_choose_image"
-        android:layout_width="176dp"
-        android:layout_height="49dp"
+        android:layout_width="337dp"
+        android:layout_height="47dp"
         android:layout_marginTop="1dp"
         android:drawableLeft="@android:drawable/ic_menu_camera"
-        android:text="Choose Image"
+        android:text="Pilih Gambar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/spinner"
         app:layout_constraintHorizontal_bias="0.0"
@@ -229,16 +231,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"></ProgressBar>
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="106dp"
-        android:layout_height="65dp"
-        android:layout_marginTop="1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/spinner"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/btn_choose_image"
-        app:layout_constraintTop_toTopOf="@+id/btn_choose_image"
-        app:layout_constraintVertical_bias="0.0"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+    <TextView
+        android:id="@+id/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="44dp"
+        android:text="Sudah Punya Akun?"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_daftar"
+        app:layout_constraintEnd_toStartOf="@+id/btn_daftar"
+        app:layout_constraintHorizontal_bias="0.155"
+        app:layout_constraintStart_toStartOf="@+id/btn_choose_image"
+        app:layout_constraintTop_toTopOf="@+id/btn_daftar" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
