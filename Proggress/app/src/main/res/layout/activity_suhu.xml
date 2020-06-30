@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".menu.Suhu">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -16,12 +17,19 @@
             android:gravity="center|top"
             android:orientation="vertical">
 
+            <com.github.lzyzsd.circleprogress.DonutProgress
 
+                android:id="@+id/donut_progress"
+                android:layout_width="260dp"
+                android:layout_height="260dp"
+
+                />
             <com.anychart.AnyChartView
+                android:layout_marginTop="10dp"
                 android:id="@+id/any_chart_view"
                 android:layout_width="match_parent"
-                android:layout_height="235dp" />
-            
+                android:layout_height="match_parent" />
+
 
         </LinearLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
