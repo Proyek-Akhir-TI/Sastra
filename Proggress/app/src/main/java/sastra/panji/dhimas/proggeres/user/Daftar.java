@@ -1,11 +1,14 @@
 package sastra.panji.dhimas.proggeres.user;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -19,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -39,9 +43,14 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import sastra.panji.dhimas.proggeres.R;
 
@@ -128,7 +137,7 @@ public class Daftar extends AppCompatActivity {
                 } else if (Telp.equals("") || Telp.length() < 12) {
                     telpon.setError("Masukkan nomor Telpon");
 
-                } else if (decoded == null) {
+                } else if (decoded.isRecycled()) {
 
                     chooseImg.setError("Pilih Gambar Profile");
                 } else {
@@ -144,10 +153,10 @@ public class Daftar extends AppCompatActivity {
     private void daftarPeternak(final String namanya, final String emailnya, final String alamatnya, final String passwordnya, final String telponya, final int kelompok_id) {
         loading.setVisibility(View.VISIBLE);
         daftar.setVisibility(View.GONE);
-        String daftarnya = "api/peternak/auth/daftar";
+        String daftarnya = "https://ta.poliwangi.ac.id/~ti17183/laravel/public/api/peternak/register";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, R.string.SERVER + daftarnya, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, daftarnya, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
@@ -190,7 +199,7 @@ public class Daftar extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                 } else if (error instanceof AuthFailureError) {
                     Toast.makeText(getApplicationContext(),
-                            "Authentiasi salah",
+                            "Authentikasi salah",
                             Toast.LENGTH_LONG).show();
                 } else if (error instanceof ServerError) {
                     Toast.makeText(getApplicationContext(),
@@ -220,6 +229,7 @@ public class Daftar extends AppCompatActivity {
                 params.put("telp", telponya);
                 params.put("kelompok_id", Integer.toString(kelompok_id));
                 params.put("photo", getStringImage(decoded));
+                params.put("status", String.valueOf(0));
                 Log.e("Params", "" + params);
                 return params;
 
@@ -245,15 +255,37 @@ public class Daftar extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri filePath = data.getData();
-            try {
-                //mengambil fambar dari Gallery
-                bitmap = MediaStore.Images.Media.getBitmap(Daftar.this.getContentResolver(), filePath);
-                // 512 adalah resolusi tertinggi setelah image di resize, bisa di ganti.
-                setToImageView(getResizedBitmap(bitmap, 512));
-            } catch (IOException e) {
-                e.printStackTrace();
+//        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+//            Uri filePath = data.getData();
+//            try {
+//                //mengambil fambar dari Gallery
+//                bitmap = MediaStore.Images.Media.getBitmap(Daftar.this.getContentResolver(), filePath);
+//                // 512 adalah resolusi tertinggi setelah image di resize, bisa di ganti.
+//                setToImageView(getResizedBitmap(bitmap, 512));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_CAMERA) {
+                try {
+                    Log.e("CAMERA", Objects.requireNonNull(fileUri.getPath()));
+
+                    bitmap = rotateImage(BitmapFactory.decodeFile(fileUri.getPath()), 270);
+                    setToImageView(getResizedBitmap(bitmap, 512));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if (requestCode == SELECT_FILE && data != null && data.getData() != null) {
+                try {
+                    // mengambil gambar dari Gallery
+                    bitmap = MediaStore.Images.Media.getBitmap(Daftar.this.getContentResolver(), data.getData());
+                    Log.d("Bitmap", bitmap.toString());
+                    Log.d("Data:", data.getData().toString());
+                    setToImageView(getResizedBitmap(bitmap, 512));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -271,7 +303,11 @@ public class Daftar extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 if (items[item].equals("Take Photo")) {
+//                    intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, fileUri);
+//                    startActivityForResult(intent, REQUEST_CAMERA);
                     intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    fileUri = getOutputMediaFileUri();
                     intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, fileUri);
                     startActivityForResult(intent, REQUEST_CAMERA);
                 } else if (items[item].equals("Choose from Library")) {
@@ -285,6 +321,31 @@ public class Daftar extends AppCompatActivity {
             }
         });
         builder.show();
+    }
+
+    public Uri getOutputMediaFileUri() {
+        return FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".fileprovider", Objects.requireNonNull(getOutputMediaFile()));
+    }
+
+    private static File getOutputMediaFile() {
+
+        // External sdcard location
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "DeKa");
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.e("Monitoring", "Oops! Failed create Monitoring directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        File mediaFile;
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_BeeSet_" + timeStamp + ".jpg");
+
+        return mediaFile;
     }
 
     public String getStringImage(Bitmap bmp) {
@@ -327,6 +388,15 @@ public class Daftar extends AppCompatActivity {
         alamat.setText("");
         password.setText("");
         email.setText("");
+        decoded.recycle();
 
+    }
+
+    private static Bitmap rotateImage(Bitmap img, int degree) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+        img.recycle();
+        return rotatedImg;
     }
 }

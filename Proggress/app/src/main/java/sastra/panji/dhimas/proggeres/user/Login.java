@@ -40,7 +40,7 @@ import java.util.Map;
 import sastra.panji.dhimas.proggeres.Model.Peternak;
 import sastra.panji.dhimas.proggeres.R;
 
-public class Login extends AppCompatActivity {
+public class Login extends AppCompatActivity implements View.OnClickListener {
 
     EditText username, password;
     Button login;
@@ -60,40 +60,18 @@ public class Login extends AppCompatActivity {
         login = findViewById(R.id.btn_login);
         loading = findViewById(R.id.loading);
 
-        daftar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Login.this, Daftar.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String Username = username.getText().toString().trim();
-                String Password = password.getText().toString().trim();
-
-                if (!Username.isEmpty() || !Password.isEmpty()) {
-
-                    Login(Username, Password);
-                } else {
-                    username.setError("Masukkan Username");
-                    password.setError("Masukkan Password");
-                }
-            }
-        });
-
+        daftar.setOnClickListener(this);
+        login.setOnClickListener(this);
 
     }
 
     private void Login(final String user, final String pass) {
         loading.setVisibility(View.VISIBLE);
         login.setVisibility(View.GONE);
-        String loginnya = "api/peternak/auth/login";
+
+        String loginnya = "https://ta.poliwangi.ac.id/~ti17183/laravel/public/api/peternak/login";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, R.string.SERVER + loginnya, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, loginnya, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
@@ -105,14 +83,17 @@ public class Login extends AppCompatActivity {
 
                         String id = object.getString("id");
                         String nm = object.getString("nama");
-                        String tk = object.getString("Token");
+                        String em = object.getString("email");
+                        String tk = object.getString("token");
                         String img = object.getString("images");
+                        String kl_id = object.getString("kelompok_id");
                         loading.setVisibility(View.GONE);
                         peternak.setId(Integer.parseInt(id));
                         peternak.setNama(nm);
                         peternak.setToken(tk);
                         peternak.setPhoto(img);
-
+                        peternak.setEmail(em);
+                        peternak.setKelompok_id(Integer.parseInt(kl_id));
                         Toast.makeText(Login.this, "Selamat Datang " + nm, Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(Login.this, ListKandang.class);
                         intent.putExtra(ListKandang.EXTRA_MOVIES, peternak);
@@ -210,8 +191,30 @@ public class Login extends AppCompatActivity {
                         // Log and toast
 //                        String msg = getString(R.string.msg_token_fmt, token);
 //                        Log.d("TAG", msg);
-                        Toast.makeText(Login.this, token, Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(Login.this, token, Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_login:
+                String Username = username.getText().toString().trim();
+                String Password = password.getText().toString().trim();
+                if (!Username.isEmpty() || !Password.isEmpty()) {
+
+                    Login(Username, Password);
+                } else {
+                    username.setError("Masukkan Username");
+                    password.setError("Masukkan Password");
+                }
+                break;
+            case R.id.daftar:
+                Intent intent2 = new Intent(Login.this, Daftar.class);
+                startActivity(intent2);
+                finish();
+                break;
+        }
+
     }
 }
