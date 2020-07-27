@@ -81,6 +81,64 @@ public class Preferences {
     static final String KELOMPOK = "0";
     static final String NAMA_KANDANG = "kandang";
     static final String STATUS_KANDANG = "status";
+    static final String ID_USER = "token";
+
+    public static String getFirebase(Context context) {
+        return getSharedPreference(context).getString(FIREBASE, "");
+    }
+    public static void setFirebase(Context context, String firebase) {
+        SharedPreferences.Editor editor = getSharedPreference(context).edit();
+        editor.putString(FIREBASE, firebase);
+        editor.apply();
+    }
+
+    static final String FIREBASE = "id";
+    static final String ID_KANDANG = "id";
+
+    public static String getLatKandang(Context context) {
+        return getSharedPreference(context).getString(LAT_KANDANG, "");
+    }
+
+    public static void setLatKandang(Context context, String lat_kandang) {
+        SharedPreferences.Editor editor = getSharedPreference(context).edit();
+        editor.putString(LAT_KANDANG, lat_kandang);
+        editor.apply();
+    }
+
+
+    public static String getLongKandang(Context context) {
+        return getSharedPreference(context).getString(LONG_KANDANG, "");
+    }
+
+    public static void setLongKandang(Context context, String long_kandang) {
+        SharedPreferences.Editor editor = getSharedPreference(context).edit();
+        editor.putString(LONG_KANDANG, long_kandang);
+        editor.apply();
+    }
+
+    static final String LAT_KANDANG = "lat";
+    static final String LONG_KANDANG = "long";
+
+    public static String getIdKandang(Context context) {
+        return getSharedPreference(context).getString(ID_KANDANG, "");
+    }
+
+    public static void setIdKandang(Context context, String id_kandang) {
+        SharedPreferences.Editor editor = getSharedPreference(context).edit();
+        editor.putString(ID_KANDANG, id_kandang);
+        editor.apply();
+    }
+
+
+    public static String getIdUser(Context context) {
+        return getSharedPreference(context).getString(ID_USER, "");
+    }
+
+    public static void setIdUser(Context context, String id_user) {
+        SharedPreferences.Editor editor = getSharedPreference(context).edit();
+        editor.putString(ID_USER, id_user);
+        editor.apply();
+    }
 
     public static String getNamaKandang(Context context) {
         return getSharedPreference(context).getString(NAMA_KANDANG, "");
@@ -164,9 +222,10 @@ public class Preferences {
      * Deklarasi Edit Preferences dan mengubah data
      * yang memiliki key KEY_STATUS_SEDANG_LOGIN dengan parameter status
      */
-    public static void setLoggedInStatus(Context context, boolean status) {
+    public static void setLoggedInStatus(Context context, boolean status, String id) {
         SharedPreferences.Editor editor = getSharedPreference(context).edit();
         editor.putBoolean(KEY_STATUS_SEDANG_LOGIN, status);
+        editor.putString(ID_USER, id);
         editor.apply();
     }
 
@@ -190,6 +249,13 @@ public class Preferences {
         editor.remove(NAMA);
         editor.remove(EMAIL);
         editor.remove(KELOMPOK);
+        editor.remove(ID_USER);
+        editor.apply();
+    }
+    public static void clearFirebase(Context context)
+    {
+        SharedPreferences.Editor editor = getSharedPreference(context).edit();
+        editor.remove(FIREBASE);
         editor.apply();
     }
 
@@ -198,6 +264,9 @@ public class Preferences {
         editor.remove(URL_ACTIVE);
         editor.remove(NAMA_KANDANG);
         editor.remove(STATUS_KANDANG);
+        editor.remove(ID_KANDANG);
+        editor.remove(LONG_KANDANG);
+        editor.remove(LAT_KANDANG);
         editor.apply();
     }
 }
