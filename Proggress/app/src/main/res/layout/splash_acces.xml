@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="#FFF000"
+    android:layout_gravity="center"
+    android:gravity="center"
     android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:background="@mipmap/ic_launcher" />
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/splash" />
 
-</RelativeLayout>
+</LinearLayout>
