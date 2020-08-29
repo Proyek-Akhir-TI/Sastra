@@ -12,6 +12,19 @@ public class Preferences {
      */
     static final String KEY_USER_TEREGISTER = "user", KEY_PASS_TEREGISTER = "pass";
     static final String KEY_USERNAME_SEDANG_LOGIN = "Username_logged_in";
+    static final String KEY_STATUS_SEDANG_LOGIN = "Status_logged_in";
+    static final String URL_ACTIVE = "url_candang";
+    static final String BEARER_USER = "bearer";
+    static final String URL_IMG = "img", EMAIL = "email", NAMA = "nama";
+    static final String KELOMPOK = "0";
+    static final String NAMA_KANDANG = "kandang";
+    static final String STATUS_KANDANG = "status";
+    static final String ID_USER = "token";
+    static final String NO_TELPON = "0";
+    static final String FIREBASE = "id";
+    static final String ID_KANDANG = "id";
+    static final String LAT_KANDANG = "lat";
+    static final String LONG_KANDANG = "long";
 
     public static String getUrlActive(Context context) {
         return getSharedPreference(context).getString(URL_ACTIVE, "");
@@ -32,10 +45,6 @@ public class Preferences {
         editor.putString(BEARER_USER, bearer);
         editor.apply();
     }
-
-    static final String KEY_STATUS_SEDANG_LOGIN = "Status_logged_in";
-    static final String URL_ACTIVE = "url_candang";
-    static final String BEARER_USER = "bearer";
 
     public static String getUrlImg(Context context) {
         return getSharedPreference(context).getString(URL_IMG, "");
@@ -77,23 +86,25 @@ public class Preferences {
         editor.apply();
     }
 
-    static final String URL_IMG = "img", EMAIL = "email", NAMA = "nama";
-    static final String KELOMPOK = "0";
-    static final String NAMA_KANDANG = "kandang";
-    static final String STATUS_KANDANG = "status";
-    static final String ID_USER = "token";
+    public static String getNoTelpon(Context context) {
+        return getSharedPreference(context).getString(NO_TELPON, "");
+    }
+
+    public static void setNoTelpon(Context context, String telpon) {
+        SharedPreferences.Editor editor = getSharedPreference(context).edit();
+        editor.putString(NO_TELPON, telpon);
+        editor.apply();
+    }
 
     public static String getFirebase(Context context) {
         return getSharedPreference(context).getString(FIREBASE, "");
     }
+
     public static void setFirebase(Context context, String firebase) {
         SharedPreferences.Editor editor = getSharedPreference(context).edit();
         editor.putString(FIREBASE, firebase);
         editor.apply();
     }
-
-    static final String FIREBASE = "id";
-    static final String ID_KANDANG = "id";
 
     public static String getLatKandang(Context context) {
         return getSharedPreference(context).getString(LAT_KANDANG, "");
@@ -105,7 +116,6 @@ public class Preferences {
         editor.apply();
     }
 
-
     public static String getLongKandang(Context context) {
         return getSharedPreference(context).getString(LONG_KANDANG, "");
     }
@@ -115,9 +125,6 @@ public class Preferences {
         editor.putString(LONG_KANDANG, long_kandang);
         editor.apply();
     }
-
-    static final String LAT_KANDANG = "lat";
-    static final String LONG_KANDANG = "long";
 
     public static String getIdKandang(Context context) {
         return getSharedPreference(context).getString(ID_KANDANG, "");
@@ -252,8 +259,8 @@ public class Preferences {
         editor.remove(ID_USER);
         editor.apply();
     }
-    public static void clearFirebase(Context context)
-    {
+
+    public static void clearFirebase(Context context) {
         SharedPreferences.Editor editor = getSharedPreference(context).edit();
         editor.remove(FIREBASE);
         editor.apply();
