@@ -172,9 +172,9 @@ public class Daftar extends AppCompatActivity {
                             "Authentikasi salah",
                             Toast.LENGTH_LONG).show();
                 } else if (error instanceof ServerError) {
-                    Toast.makeText(getApplicationContext(),
-                            "Email Telah Digunaan",
-                            Toast.LENGTH_LONG).show();
+                    Toasty.info(getApplicationContext(),
+                            "Email Telah Digunakan",
+                            Toasty.LENGTH_LONG,true).show();
                 } else if (error instanceof NetworkError) {
                     Toast.makeText(getApplicationContext(),
                             "Networ Error",
@@ -356,8 +356,11 @@ public class Daftar extends AppCompatActivity {
             return false;
 
         }
-        if (isEmpty(password) || password.length() < 6) {
+        if (isEmpty(password)) {
             password.setError("Masukkan Password");
+            return false;
+        }else if ( password.length() < 6){
+            password.setError("Password minimal 6 karakter");
             return false;
         }
         if (isEmpty(telpon) && telpon.length() <= 11) {

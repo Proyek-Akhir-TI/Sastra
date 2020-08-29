@@ -2,6 +2,7 @@ package sastra.panji.dhimas.proggeres.user;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -10,7 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
@@ -26,10 +26,6 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,15 +33,16 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import sastra.panji.dhimas.proggeres.Model.Peternak;
+import es.dmoral.toasty.Toasty;
 import sastra.panji.dhimas.proggeres.R;
+import sastra.panji.dhimas.proggeres.helper.Preferences;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
     EditText username, password;
     Button login;
     ProgressBar loading;
-    TextView daftar;
+    TextView daftar, lupa;
 
 
     @Override
@@ -53,23 +50,24 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        getCurrentFirebaseToken();
         daftar = findViewById(R.id.daftar);
         username = findViewById(R.id.lg_username);
         password = findViewById(R.id.lg_password2);
         login = findViewById(R.id.btn_login);
         loading = findViewById(R.id.loading);
+        lupa = findViewById(R.id.lupa);
 
         daftar.setOnClickListener(this);
         login.setOnClickListener(this);
+        lupa.setOnClickListener(this);
 
     }
 
-    private void Login(final String user, final String pass) {
+    private void Login(final String user, final String pass, final String token) {
         loading.setVisibility(View.VISIBLE);
         login.setVisibility(View.GONE);
 
-        String loginnya = "https://ta.poliwangi.ac.id/~ti17183/laravel/public/api/peternak/login";
+        String loginnya = "http://ta.poliwangi.ac.id/~ti17183/laravel/public/api/peternak/login";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, loginnya, new Response.Listener<String>() {
             @Override
@@ -78,7 +76,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     Log.d("Response", response.toString());
                     JSONObject object = new JSONObject(response);
                     boolean succes = object.getBoolean("status");
-                    Peternak peternak = new Peternak();
+                    String pesan = object.getString("message");
                     if (succes) {
 
                         String id = object.getString("id");
@@ -88,28 +86,25 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         String img = object.getString("images");
                         String kl_id = object.getString("kelompok_id");
                         loading.setVisibility(View.GONE);
-                        peternak.setId(Integer.parseInt(id));
-                        peternak.setNama(nm);
-                        peternak.setToken(tk);
-                        peternak.setPhoto(img);
-                        peternak.setEmail(em);
-                        peternak.setKelompok_id(Integer.parseInt(kl_id));
-                        Toast.makeText(Login.this, "Selamat Datang " + nm, Toast.LENGTH_LONG).show();
+
+                        Preferences.setLoggedInStatus(getBaseContext(), true, id);
+                        Preferences.setBearerUser(getBaseContext(), tk);
+                        Preferences.setEmail(getBaseContext(), em);
+                        Preferences.setKelompok(getBaseContext(), kl_id);
+                        Preferences.setUrlImg(getBaseContext(), img);
+                        Preferences.setNama(getBaseContext(), nm);
+                        Toasty.success(Login.this, "Selamat Datang " + nm, Toasty.LENGTH_LONG, true).show();
                         Intent intent = new Intent(Login.this, ListKandang.class);
-                        intent.putExtra(ListKandang.EXTRA_MOVIES, peternak);
                         startActivity(intent);
                         finish();
-
-
                     } else {
                         loading.setVisibility(View.GONE);
-                        Toast.makeText(Login.this, "Login Gagal!", Toast.LENGTH_LONG).show();
-
+                        login.setVisibility(View.VISIBLE);
+                        Toasty.error(Login.this, pesan, Toast.LENGTH_SHORT, true).show();
                     }
 
                 } catch (JSONException e) {
                     loading.setVisibility(View.GONE);
-
                     login.setVisibility(View.VISIBLE);
                     Toast.makeText(Login.this, "Error " + e.toString(), Toast.LENGTH_LONG).show();
                     e.printStackTrace();
@@ -123,25 +118,15 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 loading.setVisibility(View.GONE);
                 login.setVisibility(View.VISIBLE);
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    Toast.makeText(getApplicationContext(),
-                            "Time Out!",
-                            Toast.LENGTH_LONG).show();
+                    Toasty.error(Login.this, "Waktu Habis!", Toast.LENGTH_SHORT, true).show();
                 } else if (error instanceof AuthFailureError) {
-                    Toast.makeText(getApplicationContext(),
-                            "Email/Password Salah",
-                            Toast.LENGTH_LONG).show();
+                    Toasty.error(Login.this, "Email/Password Salah", Toast.LENGTH_SHORT, true).show();
                 } else if (error instanceof ServerError) {
-                    Toast.makeText(getApplicationContext(),
-                            "Email Telah Digunaan",
-                            Toast.LENGTH_LONG).show();
+                    Toasty.error(Login.this, "Kesalahan Server!", Toast.LENGTH_SHORT, true).show();
                 } else if (error instanceof NetworkError) {
-                    Toast.makeText(getApplicationContext(),
-                            "Networ Error",
-                            Toast.LENGTH_LONG).show();
+                    Toasty.error(Login.this, "Jaringan Bermasalah!", Toast.LENGTH_SHORT, true).show();
                 } else if (error instanceof ParseError) {
-                    Toast.makeText(getApplicationContext(),
-                            "PArse Error",
-                            Toast.LENGTH_LONG).show();
+                    Toasty.error(Login.this, "Parse Error!", Toast.LENGTH_SHORT, true).show();
                 }
 
 
@@ -152,16 +137,15 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 Map<String, String> params = new HashMap<>();
                 params.put("email", user);
                 params.put("password", pass);
+                params.put("api_firebase", token);
                 return params;
+
             }
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-
-
                 params.put("Accept", "application/json");
-
                 return params;
             }
 
@@ -174,47 +158,61 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         requestQueue.add(stringRequest);
     }
 
-    private void getCurrentFirebaseToken() {
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w("TAG", "getInstanceId failed", task.getException());
-                            return;
-                        }
-
-                        // Get new Instance ID token
-                        String token = task.getResult().getToken();
-                        Log.e("currentToken fcm", token);
-
-                        // Log and toast
-//                        String msg = getString(R.string.msg_token_fmt, token);
-//                        Log.d("TAG", msg);
-                       // Toast.makeText(Login.this, token, Toast.LENGTH_SHORT).show();
-                    }
-                });
+    private boolean isEmpty(EditText text) {
+        CharSequence str = text.getText().toString();
+        return TextUtils.isEmpty(str);
     }
+
 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_login:
                 String Username = username.getText().toString().trim();
                 String Password = password.getText().toString().trim();
-                if (!Username.isEmpty() || !Password.isEmpty()) {
 
-                    Login(Username, Password);
-                } else {
-                    username.setError("Masukkan Username");
-                    password.setError("Masukkan Password");
+                if (isInputValid()) {
+                    String token = Preferences.getFirebase(getBaseContext());
+                    Login(Username, Password, token);
+
                 }
+
+
                 break;
             case R.id.daftar:
                 Intent intent2 = new Intent(Login.this, Daftar.class);
                 startActivity(intent2);
-                finish();
+                break;
+            case R.id.lupa:
+                Intent intent3 = new Intent(Login.this, LupaPassword.class);
+                startActivity(intent3);
                 break;
         }
 
+    }
+
+    private Boolean isInputValid() {
+
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        String str = username.getText().toString().trim();
+        if (isEmpty(username)) {
+            username.setError("Masukkan email");
+            return false;
+
+        } else if (!str.matches(emailPattern)) {
+            username.setError("Email Tidak Valid");
+            return false;
+
+        }
+
+        if (isEmpty(password)) {
+            password.setError("Masukkan Password");
+            return false;
+        } else if (password.length() < 6) {
+            password.setError("Password minimal 6 karakter");
+            return false;
+        }
+
+
+        return true;
     }
 }
