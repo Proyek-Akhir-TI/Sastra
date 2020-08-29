@@ -48,6 +48,8 @@ public class PermissionHelper {
             int permissionWriteStorage = ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
             int permissionLocation = ContextCompat.checkSelfPermission(mActivity,Manifest.permission.ACCESS_COARSE_LOCATION);
             int permissionLocation2 = ContextCompat.checkSelfPermission(mActivity,Manifest.permission.ACCESS_FINE_LOCATION);
+            int permissionSms = ContextCompat.checkSelfPermission(mActivity,Manifest.permission.SEND_SMS);
+
             List<String> listPermissionsNeeded = new ArrayList<>();
 
             if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
@@ -64,6 +66,9 @@ public class PermissionHelper {
             }
             if (permissionLocation2 != PackageManager.PERMISSION_GRANTED) {
                 listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+            if (permissionSms != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.SEND_SMS);
             }
 
             if (!listPermissionsNeeded.isEmpty()) {
