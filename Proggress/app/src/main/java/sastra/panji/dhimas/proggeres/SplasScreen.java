@@ -94,7 +94,7 @@ public class SplasScreen extends AppCompatActivity {
                         String token = task.getResult().getToken();
                         Preferences.clearFirebase(getBaseContext());
                         Preferences.setFirebase(getBaseContext(),token);
-                        updateToken(token, Preferences.getIdUser(getBaseContext()));
+                        updateToken(token, Preferences.getBearerUser(getBaseContext()));
                         Log.e("currentToken fcm", token);
 
 
@@ -114,6 +114,7 @@ public class SplasScreen extends AppCompatActivity {
 
                         // Get new Instance ID token
                         String token = task.getResult().getToken();
+                        Log.d("current",token);
                         Preferences.clearFirebase(getBaseContext());
                         Preferences.setFirebase(getBaseContext(),token);
 
@@ -121,7 +122,7 @@ public class SplasScreen extends AppCompatActivity {
                     }
                 });
     }
-    private void updateToken(final String token, final String id) {
+    private void updateToken(final String token, final String bearer) {
         String url = "http://ta.poliwangi.ac.id/~ti17183/laravel/public/api/peternak/firebase";
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -138,7 +139,6 @@ public class SplasScreen extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("id", id);
                 params.put("firebase", token);
                 Log.d("params",""+params);
                 return params;
@@ -149,6 +149,7 @@ public class SplasScreen extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("Accept", "application/json");
+                params.put("Authorization", "Bearer " + bearer);
 
                 return params;
             }
