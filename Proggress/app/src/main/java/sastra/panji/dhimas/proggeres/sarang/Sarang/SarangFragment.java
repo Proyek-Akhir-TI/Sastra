@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -43,7 +44,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
 
@@ -60,7 +63,7 @@ public class SarangFragment extends Fragment {
 
     private Cartesian cartesian;
     private CircularProgressBar circularFillableLoaders;
-    private Button panen;
+    private Button panen, panen2;
     private final Runnable r = new Runnable() {
         public void run() {
             //loading.setVisibility(View.VISIBLE);
@@ -92,6 +95,8 @@ public class SarangFragment extends Fragment {
         line();
 //        getBerat1(url);
         panen = view.findViewById(R.id.btn_panen1);
+        panen2 = view.findViewById(R.id.btn_selesai1);
+
         panen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,8 +105,25 @@ public class SarangFragment extends Fragment {
                 Toast.makeText(getContext(), "Panen Dimulai.",
                         Toast.LENGTH_LONG).show();
                 panen.setVisibility(View.INVISIBLE);
+                setPanen(Preferences.getBearerUser(getContext()));
+                panen.setBackgroundColor(R.drawable.btn_selesai);
+                panen2.setVisibility(View.VISIBLE);
             }
         });
+        panen2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SmsManager smsManager = SmsManager.getDefault();
+                smsManager.sendTextMessage(Preferences.getNoTelpon(getContext()), null, "2", null, null);
+                Toast.makeText(getContext(), "Panen Selesai Dimulai.",
+                        Toast.LENGTH_LONG).show();
+                panen2.setVisibility(View.INVISIBLE);
+                setSelesai(Preferences.getBearerUser(getContext()));
+                panen2.setBackgroundColor(R.drawable.btn_selesai);
+                panen.setVisibility(View.VISIBLE);
+            }
+        });
+
     }
 
 //    @Override
@@ -170,8 +192,75 @@ public class SarangFragment extends Fragment {
         queue.add(request);
     }
 
-    void set(){
+    private void setPanen(final String bearer) {
+        String urlnya = "http://ta.poliwangi.ac.id/~ti17183/laravel/public/api/peternak/kandang/setpanen";
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        StringRequest request = new StringRequest(Request.Method.POST, urlnya, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
 
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("status", String.valueOf(1));
+                params.put("kandang_id", Preferences.getIdKandang(getContext()));
+
+                return params;
+
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Accept", "application/json");
+                params.put("Authorization", "Bearer " + bearer);
+                return params;
+            }
+        };
+        queue.add(request);
+
+    }
+
+    private void setSelesai(final String bearer) {
+        String urlnya = "http://ta.poliwangi.ac.id/~ti17183/laravel/public/api/peternak/kandang/setpanen";
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        StringRequest request = new StringRequest(Request.Method.POST, urlnya, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("Panennya", response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("status", String.valueOf(0));
+                params.put("kandang_id", Preferences.getIdKandang(getContext()));
+
+                return params;
+
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Accept", "application/json");
+                params.put("Authorization", "Bearer " + bearer);
+                return params;
+            }
+        };
+        queue.add(request);
     }
 
     private void line() {

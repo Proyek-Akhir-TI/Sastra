@@ -56,16 +56,16 @@
                 android:textColor="#ffffff"
                 android:visibility="visible" />
             <Button
-                android:id="@+id/btn_panen2"
+                android:id="@+id/btn_selesai1"
                 android:layout_width="123dp"
                 android:layout_marginStart="10dp"
                 android:layout_height="58dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/btn_logout"
+                android:background="@drawable/btn_selesai"
                 android:text="selesai"
                 android:textColor="#ffffff"
-                android:visibility="visible" />
+                android:visibility="invisible" />
         </LinearLayout>
 
         <com.anychart.AnyChartView
