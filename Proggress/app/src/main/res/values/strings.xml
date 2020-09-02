@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">Proggeres</string>
+    <string name="app_name">Beeset</string>
+    <string name="permission_dialog">Akses lokasi diperlukan aplikasi</string>
+    <string name="go_to_permissions_settings">Pergi ke Pengaturan dan ijinkan aplikasi</string>
+    <string-array name="kelompok">
+        <item>Tunas Harapan</item>
+        <item>Tunas Muda</item>
+        <item>Tunas Bangsa</item>
+    </string-array>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_berat_frame">BeratFrame</string>
+    <string name="title_home">Sarang 1</string>
+    <string name="title_dashboard">Sarang 2</string>
+    <string name="title_notifications">Sarang 3</string>
+    <string name="title_activity_berat_sarang">BeratSarang</string>
 </resources>
+

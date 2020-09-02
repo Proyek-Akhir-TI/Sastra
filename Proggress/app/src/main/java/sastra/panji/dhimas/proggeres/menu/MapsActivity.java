@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -27,16 +28,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import sastra.panji.dhimas.proggeres.R;
+import sastra.panji.dhimas.proggeres.helper.Preferences;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private String url = "http://ta.poliwangi.ac.id/~ti17183/laravel/public/api/peternak/listkandang";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -53,12 +61,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             "Lat : " + location.getLatitude() + " Long : " + location.getLongitude(),
                             Toast.LENGTH_LONG).show();
                     LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 15));
+                    // LatLng current = new LatLng(lat, lng);
+//                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 19));
+                    //    mMap.addMarker(new MarkerOptions().position(new LatLng(-8.2932474,114.3084413)).title("Kandang" + Preferences.getNamaKandang(getBaseContext())));
 
                 }
+
             }
         });
-        getLatLang();
+
+        getLatLang(Preferences.getBearerUser(getBaseContext()));
     }
 
 
@@ -77,27 +89,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
-        mMap.addMarker(new MarkerOptions().position(new LatLng(22.7253, 75.8655)).title("Indore"));
         // Add a marker in Sydney and move the camera
 
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
     }
 
-    public void getLatLang() {
-        String url = "https://api.thingspeak.com/channels/1085076/feeds.json?api_key=R28BW9NXV8RGGCQ6&results=1000&location=true";
+    public void getLatLang(final String bearer) {
+
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                JSONObject object = null;
+
                 try {
-                    object = new JSONObject(response);
-                    JSONArray array = object.getJSONArray("feeds");
-                    JSONObject suh = array.getJSONObject(array.length() - 1);
-                    double lat = suh.getDouble("latitude");
-                    double lng = suh.getDouble("longitude");
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title("Candang 1"));
+                    JSONObject object = new JSONObject(response);
+                    JSONArray array = object.getJSONArray("kandang");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject object1 = array.getJSONObject(i);
+                        double lat = object1.getDouble("latitude");
+                        double lng = object1.getDouble("longitude");
+                        String nama = object1.getString("nama");
+                        if (!object1.isNull("latitude") && !object1.isNull("longitude")) {
+                            mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(nama));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lng), 19));
+                        }
+
+                    }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -109,7 +128,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onErrorResponse(VolleyError error) {
 
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Accept", "application/json");
+                params.put("Authorization", "Bearer " + bearer);
+
+                return params;
+            }
+        };
         queue.add(request);
     }
 

@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".menu.Suhu">
+    tools:context=".Suhu.Suhu">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/KuningBeeseet"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -17,20 +23,108 @@
             android:gravity="center|top"
             android:orientation="vertical">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Grafik Harian"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
             <com.github.lzyzsd.circleprogress.DonutProgress
 
                 android:id="@+id/donut_progress"
                 android:layout_width="260dp"
                 android:layout_height="260dp"
 
+
                 />
-            <com.anychart.AnyChartView
-                android:layout_marginTop="10dp"
-                android:id="@+id/any_chart_view"
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="70dp"
+                android:background="#ffffff"
+                android:orientation="horizontal">
+
+
+            </LinearLayout>
+
+            <com.anychart.AnyChartView
+                android:id="@+id/any_chart_view_suhu"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp">
+
+            </com.anychart.AnyChartView>
 
 
         </LinearLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-</RelativeLayout>
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/suhu_loading"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
+        android:elevation="10dp"
+        android:indeterminateTint="@color/KuningBeeseet"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.952"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.991"
+        app:menu_backgroundColor="@android:color/transparent"
+        app:menu_colorNormal="#8B4513"
+        app:menu_colorPressed="#FF00786D"
+        app:menu_fab_size="normal"
+        app:menu_labels_colorNormal="#FFFFFF"
+        app:menu_labels_colorPressed="#BDBDBD"
+        app:menu_labels_showShadow="true"
+        app:menu_labels_textColor="#000000"
+        app:menu_openDirection="up"
+        app:menu_showShadow="true">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/btn_grafik_bulan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            app:fab_colorNormal="#FF5555"
+            app:fab_colorPressed="#FF00786D"
+            app:fab_label="Grafik Bulan"
+            app:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/btn_grafik_mingguan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorNormal="@color/colorAccent"
+            app:fab_colorPressed="#FF00786D"
+            app:fab_label="Grafik Mingguan"
+            app:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/btn_grafik_harian"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorNormal="#0000FF"
+            app:fab_colorPressed="#FF00786D"
+            app:fab_label="Grafik Harian"
+            app:fab_size="mini" />
+
+    </com.github.clans.fab.FloatingActionMenu>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "141236254519",
+    "firebase_url": "https://progres-19a4d.firebaseio.com",
+    "project_id": "progres-19a4d",
+    "storage_bucket": "progres-19a4d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141236254519:android:6dcc3a38245273ae840cb2",
+        "android_client_info": {
+          "package_name": "sastra.panji.dhimas.proggeres"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "141236254519-i49d0vq4jai1bnoscth44nvtb879ip9v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sastra.panji.dhimas.proggeres",
+            "certificate_hash": "3c62f35b0acddd9ab5c3fe3e06e0c9b267539a4d"
+          }
+        },
+        {
+          "client_id": "141236254519-fhl5qi0aqvbnb556hulm60ukvakdobos.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB29lPTjMTdrrGDDcJIiniggiHsqStovog"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "141236254519-fhl5qi0aqvbnb556hulm60ukvakdobos.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
